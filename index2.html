@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HỆ THỐNG GIÁM SÁT LĨNH VỰC CƯ TRÚ, CĂN CƯỚC - CÔNG AN TỈNH ĐẮK LẮK</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for Banner Image Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- SheetJS (XLSX) for Excel File Export/Import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        police: {
+                            red: '#B91C1C',
+                            darkred: '#7F1D1D',
+                            crimson: '#991B1B',
+                            gold: '#D97706',
+                            brightgold: '#FBBF24',
+                            lightcream: '#FFFDF2'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
+        /* Standard Administrative Font: Times New Roman */
+        body, button, input, select, textarea, table {
+            font-family: 'Times New Roman', Times, 'Tinos', serif;
+            user-select: none;
+        }
+
+        /* Dong Son Bronze Drum Cream Background Pattern */
+        .dong-son-bg-cream {
+            background-color: #fffdf2;
+            background-image: 
+                radial-gradient(circle at center, rgba(254, 243, 199, 0.9) 0%, rgba(255, 253, 242, 0.98) 75%),
+                url("data:image/svg+xml,%3Csvg width='320' height='320' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d97706' fill-opacity='0.12'%3E%3Ccircle cx='100' cy='100' r='90' stroke='%23b45309' stroke-width='1.5' stroke-opacity='0.2' fill='none'/%3E%3Ccircle cx='100' cy='100' r='72' stroke='%23b45309' stroke-width='1' stroke-dasharray='4,4' stroke-opacity='0.18' fill='none'/%3E%3Ccircle cx='100' cy='100' r='52' stroke='%23b45309' stroke-width='1' stroke-opacity='0.18' fill='none'/%3E%3Cpolygon points='100,70 106,94 130,100 106,106 100,130 94,106 70,100 94,94'/%3E%3C/g%3E%3C/svg%3E");
+            background-position: center;
+        }
+
+        .flag-red-title {
+            color: #b91c1c;
+            text-shadow: 0 1px 2px rgba(185, 28, 28, 0.2);
+            font-weight: 900;
+        }
+
+        .crimson-sub-title {
+            color: #7f1d1d;
+            font-weight: 800;
+        }
+
+        /* Live Indicator Blinking */
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.85); }
+        }
+        .live-dot {
+            animation: blink 1.5s infinite ease-in-out;
+        }
+
+        /* Map Tile Hover Effects */
+        .map-tile {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .map-tile:hover {
+            filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.9));
+            transform: scale(1.03);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Floating Tooltip */
+        #map-tooltip {
+            pointer-events: none;
+            transition: opacity 0.12s ease-out;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- HEADER BANNER (CREAM & GOLD DONG SON DESIGN - 3 LINE ADMIN TITLE) -->
+    <header id="header-banner" class="relative dong-son-bg-cream border-b-4 border-amber-500 shadow-md transition-all duration-300 overflow-hidden min-h-[200px] flex flex-col justify-between p-3 md:p-4">
+        
+        <!-- Top Action Bar -->
+        <div class="relative z-10 flex justify-between items-center gap-2">
+            <!-- Left Menu Button -->
+            <button onclick="toggleSidebarNav()" class="bg-white/95 hover:bg-amber-100 text-amber-950 border border-amber-300 p-2 rounded-xl shadow-sm transition flex items-center gap-1.5 text-sm font-bold">
+                <svg class="w-5 h-5 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span class="hidden sm:inline">Danh mục</span>
+            </button>
+
+            <!-- Right Buttons Group -->
+            <div class="flex items-center space-x-2">
+                <!-- Tải ảnh Banner -->
+                <button onclick="openBannerDownloadModal()" class="bg-white/95 hover:bg-amber-50 text-amber-950 text-xs md:text-sm font-bold px-3 py-1.5 rounded-xl border border-amber-300/90 flex items-center gap-1.5 shadow-sm transition">
+                    <span>📥</span> <span>Tải ảnh</span>
+                </button>
+
+                <!-- Trình chiếu Kiosk -->
+                <button onclick="toggleKioskMode()" id="btn-kiosk-toggle" class="bg-white/95 hover:bg-amber-50 text-amber-950 text-xs md:text-sm font-bold px-3 py-1.5 rounded-xl border border-amber-300/90 flex items-center gap-1.5 shadow-sm transition">
+                    <span>↗️</span> <span id="kiosk-lbl">Trình chiếu</span>
+                </button>
+
+                <!-- Thay ảnh Banner -->
+                <button onclick="triggerBannerUpload()" class="bg-white/95 hover:bg-amber-50 text-amber-950 text-xs md:text-sm font-bold px-3 py-1.5 rounded-xl border border-amber-300/90 flex items-center gap-1.5 shadow-sm transition">
+                    <span>📷</span> <span class="hidden md:inline">Thay banner</span>
+                </button>
+                <input type="file" id="banner-file-input" class="hidden" accept="image/*" onchange="handleBannerUpload(event)">
+
+                <!-- Thu gọn/Mở rộng -->
+                <button onclick="toggleHeaderCollapse()" id="btn-collapse-header" class="bg-white/95 hover:bg-amber-50 text-amber-950 p-1.5 rounded-xl border border-amber-300/90 shadow-sm transition" title="Thu gọn/Mở rộng Banner">
+                    <span id="collapse-icon" class="text-xs font-bold px-1">▲</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Center Police Emblem & 3-Line Titles -->
+        <div class="relative z-10 flex flex-col items-center justify-center text-center my-2">
+            <!-- Huy hiệu CAND Vector chuẩn -->
+            <div class="mb-2 drop-shadow-md">
+                <svg class="w-16 h-16 md:w-20 md:h-20" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="48" fill="#FBBF24" stroke="#D97706" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="42" fill="#15803D" stroke="#FEF08A" stroke-width="1.5"/>
+                    <circle cx="50" cy="50" r="35" fill="#B91C1C" stroke="#FDE047" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="29" fill="none" stroke="#FBBF24" stroke-width="2.5" stroke-dasharray="4,2"/>
+                    <polygon points="50,22 58,38 75,39 62,51 67,68 50,57 33,68 38,51 25,39 42,38" fill="#FDE047" stroke="#B45309" stroke-width="1.2"/>
+                    <path d="M 42 66 L 58 66 L 56 71 L 44 71 Z" fill="#FBBF24" />
+                </svg>
+            </div>
+
+            <!-- Line 1: CÔNG AN TỈNH ĐẮK LẮK -->
+            <h1 class="text-xl md:text-2xl lg:text-3xl font-black tracking-tight flag-red-title uppercase mb-0.5">
+                CÔNG AN TỈNH ĐẮK LẮK
+            </h1>
+
+            <!-- Line 2: PHÒNG CẢNH SÁT QUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI -->
+            <h2 class="text-xs md:text-sm lg:text-base font-black crimson-sub-title uppercase tracking-wide mb-1">
+                PHÒNG CẢNH SÁT QUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI
+            </h2>
+
+            <!-- Line 3: HỆ THỐNG GIÁM SÁT LĨNH VỰC CƯ TRÚ, CĂN CƯỚC -->
+            <h3 class="text-xs md:text-sm lg:text-base font-extrabold text-amber-950 uppercase tracking-wide bg-amber-200/70 backdrop-blur-sm px-4 py-1 rounded-full border border-amber-400/80 shadow-inner">
+                HỆ THỐNG GIÁM SÁT LĨNH VỰC CƯ TRÚ, CĂN CƯỚC
+            </h3>
+        </div>
+
+        <div></div>
+    </header>
+
+    <!-- SUB-BAR TOOLBAR & PERIOD PROGRESS TRACKER -->
+    <div class="bg-red-900 border-b border-amber-600/40 text-white px-3 py-2.5 shadow-lg flex flex-wrap items-center justify-between gap-3 text-sm">
+        
+        <!-- Live Status Indicator -->
+        <div class="flex items-center gap-2 font-bold tracking-wide text-amber-200">
+            <span class="w-3 h-3 bg-emerald-400 rounded-full live-dot shadow-[0_0_8px_#34d399]"></span>
+            <span class="uppercase text-xs sm:text-sm">HỆ THỐNG GIÁM SÁT DỮ LIỆU CƯ TRÚ TRỰC TUYẾN</span>
+        </div>
+
+        <!-- Controls Group -->
+        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
+            
+            <!-- Report Period Switcher (Tuần / Tháng / Quý / Năm) + Delta % Tag -->
+            <div class="flex items-center gap-1 bg-red-950/90 px-2 py-1 rounded-lg border border-amber-500/50">
+                <span class="text-amber-300 font-bold text-xs">Kỳ:</span>
+                <button onclick="setPeriod('week')" id="period-week" class="px-2 py-0.5 rounded text-xs font-bold bg-amber-600 text-white">Tuần</button>
+                <button onclick="setPeriod('month')" id="period-month" class="px-2 py-0.5 rounded text-xs font-bold hover:bg-red-800 text-amber-200">Tháng</button>
+                <button onclick="setPeriod('quarter')" id="period-quarter" class="px-2 py-0.5 rounded text-xs font-bold hover:bg-red-800 text-amber-200">Quý</button>
+                <button onclick="setPeriod('year')" id="period-year" class="px-2 py-0.5 rounded text-xs font-bold hover:bg-red-800 text-amber-200">Năm</button>
+                
+                <!-- Growth Delta Tag -->
+                <span id="period-delta-badge" class="ml-1 px-1.5 py-0.5 rounded text-[11px] font-black bg-emerald-600 text-white shadow" title="Mức độ tăng/giảm so với kỳ trước">
+                    +2.4% 🟢
+                </span>
+            </div>
+
+            <!-- KPI Selector Dropdown -->
+            <div class="flex items-center gap-1 bg-red-950/90 px-2 py-1 rounded-lg border border-amber-500/50">
+                <span class="text-amber-300 font-bold text-xs">Chỉ tiêu:</span>
+                <select id="kpi-select-filter" onchange="handleKpiChange(this.value)" class="bg-red-900 text-white font-bold text-xs rounded px-2 py-1 outline-none border border-red-700 max-w-[210px] truncate">
+                    <!-- Dynamic KPI options -->
+                </select>
+            </div>
+
+            <!-- Date Selector with DD/MM/YY Display -->
+            <div class="flex items-center gap-1 bg-red-950/90 px-2 py-1 rounded-lg border border-amber-500/50">
+                <span class="text-amber-300 font-bold text-xs">📅 Ngày:</span>
+                <input type="date" id="date-select-picker" onchange="handleDateChange(this.value)" class="bg-red-900 text-white font-bold text-xs rounded px-1 py-0.5 outline-none border border-red-700">
+                <span id="date-formatted-badge" class="text-amber-200 font-bold text-xs bg-red-900 px-1.5 py-0.5 rounded border border-red-700">29/10/26</span>
+            </div>
+
+            <!-- Action Buttons Bar -->
+            <button onclick="openDailyUpdateModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow transition text-xs border border-amber-300">
+                <span>📝</span> Cập nhật ngày
+            </button>
+
+            <button onclick="openAiReportModal()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow transition text-xs border border-emerald-400">
+                <span>🤖</span> Báo cáo AI
+            </button>
+
+            <button onclick="openArchiveModal()" class="bg-red-800 hover:bg-red-700 text-amber-200 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow transition text-xs border border-amber-400">
+                <span>📁</span> Kho lưu trữ
+            </button>
+
+            <button onclick="openKpiAdminModal()" class="bg-red-800 hover:bg-red-700 text-amber-200 font-bold p-1 rounded-lg shadow transition text-xs border border-amber-400" title="Cấu hình chỉ tiêu & Tiêu chí">
+                <span>⚙️</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-[1700px] w-full mx-auto p-3 md:p-4 space-y-4">
+
+        <!-- KPI SUMMARY CARDS GRID -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <!-- Total Units -->
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md border-l-4 border-blue-600 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Tổng số đơn vị</p>
+                    <h3 id="stat-total" class="text-2xl font-black text-slate-800 dark:text-slate-100">102</h3>
+                    <p class="text-[11px] text-slate-400 font-semibold">102 Xã / Phường trực thuộc</p>
+                </div>
+                <div class="w-9 h-9 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">🏢</div>
+            </div>
+
+            <!-- Good / Green (Dynamic Threshold) -->
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md border-l-4 border-emerald-500 flex items-center justify-between">
+                <div>
+                    <p id="stat-green-label" class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">🟢 Đạt tốt (≥80%)</p>
+                    <div class="flex items-baseline gap-1.5">
+                        <h3 id="stat-green-count" class="text-2xl font-black text-emerald-600 dark:text-emerald-400">0</h3>
+                        <span id="stat-green-percent" class="text-xs font-bold text-emerald-500">(0%)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-semibold">Tăng trưởng: <span class="text-emerald-600 font-bold">+3 đơn vị</span></p>
+                </div>
+                <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center text-emerald-600 text-lg">✅</div>
+            </div>
+
+            <!-- Average / Yellow -->
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md border-l-4 border-amber-500 flex items-center justify-between">
+                <div>
+                    <p id="stat-yellow-label" class="text-xs font-bold uppercase text-amber-600 dark:text-amber-400">🟡 Trung bình (50%-80%)</p>
+                    <div class="flex items-baseline gap-1.5">
+                        <h3 id="stat-yellow-count" class="text-2xl font-black text-amber-600 dark:text-amber-400">0</h3>
+                        <span id="stat-yellow-percent" class="text-xs font-bold text-amber-500">(0%)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-semibold">Cần đẩy nhanh tiến độ</p>
+                </div>
+                <div class="w-9 h-9 bg-amber-100 dark:bg-amber-900/40 rounded-full flex items-center justify-center text-amber-600 text-lg">⚠️</div>
+            </div>
+
+            <!-- Slow / Red (<50%) -->
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md border-l-4 border-red-600 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase text-red-600 dark:text-red-400">🔴 Chậm / Báo động (&lt;50%)</p>
+                    <div class="flex items-baseline gap-1.5">
+                        <h3 id="stat-red-count" class="text-2xl font-black text-red-600 dark:text-red-400">0</h3>
+                        <span id="stat-red-percent" class="text-xs font-bold text-red-500">(0%)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-semibold">Đóng băng số liệu: <span id="stat-frozen-count" class="text-red-600 font-bold">2 xã ⚠️</span></p>
+                </div>
+                <div class="w-9 h-9 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center text-red-600 text-lg">🚨</div>
+            </div>
+
+            <!-- Overall Completion Rate -->
+            <div class="col-span-2 md:col-span-1 bg-gradient-to-br from-red-900 to-amber-900 text-white p-3 rounded-xl shadow-md border-l-4 border-amber-400 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase text-amber-300">Tỷ lệ hoàn thành toàn tỉnh</p>
+                    <h3 id="stat-overall-percent" class="text-2xl font-black text-white">0%</h3>
+                    <p id="stat-overall-period-lbl" class="text-[11px] text-amber-200/80">Kỳ báo cáo: Tuần này</p>
+                </div>
+                <div class="w-9 h-9 bg-amber-500/30 rounded-full flex items-center justify-center text-amber-300 text-lg font-bold">📈</div>
+            </div>
+        </div>
+
+        <!-- MAIN GRID: HEATMAP (7 COLS) & LEADERBOARDS + DATA TABLE (5 COLS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+            <!-- LEFT: BẢN ĐỒ NHIỆT 102 XÃ, PHƯỜNG INTERACTIVE SVG (7 COLS) -->
+            <div id="kiosk-step-1" class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-3.5 flex flex-col relative min-h-[580px]">
+                
+                <!-- Map Top Toolbar -->
+                <div class="flex flex-wrap items-center justify-between border-b pb-2 mb-3 border-slate-200 dark:border-slate-700 gap-2">
+                    <div>
+                        <h2 class="font-bold text-slate-800 dark:text-slate-100 text-base md:text-lg flex items-center gap-2">
+                            <span>🗺️</span> BẢN ĐỒ NHIỆT 102 XÃ, PHƯỜNG
+                        </h2>
+                        <p id="map-active-kpi-title" class="text-xs text-amber-700 dark:text-amber-400 font-bold">Chỉ tiêu: Tất cả (Tổng hợp)</p>
+                    </div>
+
+                    <!-- Filter Tabs & Map Zoom -->
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <div class="bg-slate-100 dark:bg-slate-900 p-1 rounded-lg flex items-center gap-1 border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                            <button onclick="filterMap('all')" id="btn-map-all" class="px-2 py-0.5 rounded bg-amber-600 text-white shadow">Tất cả</button>
+                            <button onclick="filterMap('green')" id="btn-map-green" class="px-2 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-emerald-600">🟢 Tốt</button>
+                            <button onclick="filterMap('yellow')" id="btn-map-yellow" class="px-2 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-amber-600">🟡 TB</button>
+                            <button onclick="filterMap('red')" id="btn-map-red" class="px-2 py-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-red-600">🔴 Chậm</button>
+                        </div>
+
+                        <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <button onclick="zoomMap(0.15)" class="px-2 py-0.5 font-bold text-xs hover:bg-slate-200" title="Phóng to">+</button>
+                            <button onclick="zoomMap(-0.15)" class="px-2 py-0.5 font-bold text-xs hover:bg-slate-200" title="Thu nhỏ">-</button>
+                            <button onclick="resetMapZoom()" class="px-2 py-0.5 font-bold text-[11px] hover:bg-slate-200" title="Reset">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SVG Heatmap Container -->
+                <div class="relative flex-grow flex items-center justify-center bg-slate-900/90 rounded-xl p-2 overflow-hidden border border-slate-700 shadow-inner">
+                    <svg id="daklak-heatmap-svg" class="w-full h-full max-h-[580px] min-h-[460px]" viewBox="0 0 1120 860" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Dynamic 102 SVG Matrix Tiles Rendered by JS -->
+                    </svg>
+
+                    <!-- Floating Tooltip -->
+                    <div id="map-tooltip" class="absolute hidden opacity-0 z-40 bg-slate-900/95 text-white p-3 rounded-xl shadow-2xl border border-amber-500 text-xs w-64 backdrop-blur-md">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-1 mb-1.5">
+                            <h4 id="tt-name" class="font-bold text-amber-300 text-sm">Phường Bình Kiến</h4>
+                            <span id="tt-stt" class="text-[10px] font-bold bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded">STT #1</span>
+                        </div>
+                        <p class="text-slate-300">Chỉ tiêu giao: <span id="tt-giao" class="font-bold text-white">1,000</span></p>
+                        <p class="text-slate-300">Đã hoàn thành: <span id="tt-dalam" class="font-bold text-white">950</span></p>
+                        <p id="tt-frozen-warn" class="text-red-400 font-bold hidden">⚠️ 3 ngày chưa phát sinh số liệu mới!</p>
+                        <div class="mt-2 pt-1 border-t border-slate-700 flex justify-between items-center">
+                            <span class="text-slate-400">Tỷ lệ hoàn thành:</span>
+                            <span id="tt-percent" class="font-bold text-sm text-emerald-400">95.0%</span>
+                        </div>
+                        <div id="tt-badge" class="mt-1.5 text-center py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-600 text-white">
+                            🟢 Đạt tốt (≥80%)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-2.5 flex flex-wrap items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <span>Tiêu chí đánh giá hiện tại:</span>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> <span id="legend-green-text">🟢 Tốt (≥80%)</span></div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> <span id="legend-yellow-text">🟡 TB (50%-80%)</span></div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-600 inline-block"></span> 🔴 Chậm (&lt;50%)</div>
+                    </div>
+                    <span class="text-slate-400 text-[11px] font-normal">⚠️ Viền đỏ = 3-5 ngày chưa cập nhật</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: TOP 10 LEADERBOARDS & FULL DATA TABLE (5 COLS) -->
+            <div class="lg:col-span-5 space-y-4 flex flex-col">
+
+                <!-- TOP 10 LEADERBOARDS GRID -->
+                <div id="kiosk-step-2" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    
+                    <!-- Top 10 Dẫn đầu (Tốt) -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md border border-emerald-500/40 p-3 flex flex-col h-[260px]">
+                        <div class="flex items-center justify-between border-b pb-1 mb-2 border-slate-200 dark:border-slate-700">
+                            <h3 class="font-bold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-1 uppercase">
+                                <span>🏆</span> TOP 10 DẪN ĐẦU (TỐT)
+                            </h3>
+                            <span id="badge-good-threshold" class="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold px-1.5 py-0.5 rounded">≥80%</span>
+                        </div>
+                        <div id="top10-good-list" class="flex-grow overflow-y-auto space-y-1.5 pr-1 text-xs font-bold">
+                            <!-- Dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Top 10 Cảnh báo (Chậm) -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md border border-red-500/40 p-3 flex flex-col h-[260px]">
+                        <div class="flex items-center justify-between border-b pb-1 mb-2 border-slate-200 dark:border-slate-700">
+                            <h3 class="font-bold text-xs sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 uppercase">
+                                <span>🚨</span> TOP 10 BÁO ĐỘNG (CHẬM)
+                            </h3>
+                            <span id="badge-slow-threshold" class="text-[10px] bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 font-bold px-1.5 py-0.5 rounded">&lt;50%</span>
+                        </div>
+                        <div id="top10-slow-list" class="flex-grow overflow-y-auto space-y-1.5 pr-1 text-xs font-bold">
+                            <!-- Dynamic -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FULL DATA TABLE 102 COMMUNES (COMPACT SCROLLABLE CONTAINER) -->
+                <div id="kiosk-step-3" class="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-3 flex flex-col flex-grow">
+                    
+                    <!-- Table Search & Status Filter Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <h2 class="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm flex items-center gap-1">
+                            <span>📋</span> DANH SÁCH 102 XÃ, PHƯỜNG
+                        </h2>
+                        
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <!-- Quick Status Filters -->
+                            <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
+                                <button onclick="filterTableStatus('all')" id="tbl-btn-all" class="px-2 py-0.5 rounded bg-amber-600 text-white shadow">Tất cả</button>
+                                <button onclick="filterTableStatus('green')" id="tbl-btn-green" class="px-2 py-0.5 rounded hover:bg-slate-200 text-emerald-600">🟢 Tốt</button>
+                                <button onclick="filterTableStatus('yellow')" id="tbl-btn-yellow" class="px-2 py-0.5 rounded hover:bg-slate-200 text-amber-600">🟡 TB</button>
+                                <button onclick="filterTableStatus('red')" id="tbl-btn-red" class="px-2 py-0.5 rounded hover:bg-slate-200 text-red-600">🔴 Chậm</button>
+                            </div>
+
+                            <!-- Search Input -->
+                            <input type="text" id="table-search-input" oninput="handleSearch(this.value)" placeholder="🔍 Tìm tên xã, phường..." class="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded px-2.5 py-1 text-xs outline-none w-36 sm:w-44 font-bold">
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Table Container (Fixed Max-Height 420px) -->
+                    <div class="max-h-[420px] overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg shadow-inner">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-100 dark:bg-slate-900 sticky top-0 z-20 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 uppercase font-bold text-[10px] shadow-sm">
+                                <tr>
+                                    <th class="p-2 text-center w-10 bg-slate-100 dark:bg-slate-900">STT</th>
+                                    <th class="p-2 bg-slate-100 dark:bg-slate-900">Xã / Phường</th>
+                                    <th class="p-2 text-right bg-slate-100 dark:bg-slate-900">Chỉ tiêu giao</th>
+                                    <th class="p-2 text-right bg-slate-100 dark:bg-slate-900">Đã đạt</th>
+                                    <th class="p-2 text-center w-28 bg-slate-100 dark:bg-slate-900">Tiến độ</th>
+                                    <th class="p-2 text-center bg-slate-100 dark:bg-slate-900">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="commune-table-body" class="divide-y divide-slate-200 dark:divide-slate-700/60 font-bold">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-red-950 text-amber-200/80 text-center py-2.5 border-t border-amber-600/30 text-xs">
+        <p class="font-bold">CÔNG AN TỈNH ĐẮK LẮK - PHÒNG CẢNH SÁT QUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI</p>
+        <p class="text-[11px] opacity-75 mt-0.5">Bảo lưu mọi quyền © 2026. Phân hệ Giám sát Chỉ tiêu Cư trú & Căn cước trực tuyến.</p>
+    </footer>
+
+    <!-- MODAL 1: COMMUNE DETAIL & EDIT MODAL -->
+    <div id="commune-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div>
+                    <span id="modal-commune-stt" class="text-xs font-bold uppercase text-amber-300 tracking-wide">STT #1</span>
+                    <h3 id="modal-commune-name" class="text-lg font-bold text-amber-200">Phường Bình Kiến</h3>
+                </div>
+                <button onclick="closeCommuneModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-3">
+                <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-500 uppercase font-bold">Tỷ lệ hoàn thành tổng hợp</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="modal-overall-percent" class="text-2xl font-black text-emerald-600">92.5%</span>
+                            <span id="modal-overall-status" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">🟢 Đạt tốt</span>
+                        </div>
+                    </div>
+                    <div class="text-right text-xs font-bold">
+                        <p class="text-slate-500">Giao: <span id="modal-total-giao" class="text-slate-800 dark:text-slate-100">4,000</span></p>
+                        <p class="text-slate-500">Đã đạt: <span id="modal-total-dalam" class="text-emerald-600">3,700</span></p>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 uppercase border-b pb-1 border-slate-200">
+                    Chi tiết các chỉ tiêu chuyên môn:
+                </h4>
+
+                <div class="space-y-2.5" id="modal-kpi-list-inputs">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-between items-center border-t border-slate-200">
+                <span class="text-[11px] text-slate-400">*Lưu trữ an toàn vào LocalStorage</span>
+                <div class="flex gap-2">
+                    <button onclick="saveCommuneDetails()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow">
+                        💾 Lưu kết quả
+                    </button>
+                    <button onclick="closeCommuneModal()" class="bg-slate-500 hover:bg-slate-400 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DAILY UPDATE & AI FILE INGESTION -->
+    <div id="daily-update-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📝</span>
+                    <div>
+                        <h3 class="text-base font-bold text-amber-200 uppercase">CẬP NHẬT SỐ LIỆU NGÀY & NHẬN DIỆN TỆP AI</h3>
+                        <p id="daily-modal-date-label" class="text-xs text-amber-100">Ngày: 29/10/26</p>
+                    </div>
+                </div>
+                <button onclick="closeDailyUpdateModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <!-- AI File Drag & Drop Zone -->
+            <div class="p-3 bg-amber-50/80 dark:bg-slate-900 border-b border-amber-200 dark:border-slate-700">
+                <div id="ai-dropzone" onclick="document.getElementById('ai-file-input').click()" class="border-2 border-dashed border-amber-500/80 rounded-xl p-3 text-center cursor-pointer hover:bg-amber-100/50 transition">
+                    <p class="text-xs font-bold text-amber-900 dark:text-amber-300">
+                        📁 Tải lên Tệp Excel (.xlsx, .csv) hoặc Ảnh chụp / Scan báo cáo để AI đọc tự động
+                    </p>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Kéo thả file vào đây hoặc nhấp chọn file từ máy tính</p>
+                    <input type="file" id="ai-file-input" class="hidden" accept=".xlsx,.xls,.csv,image/*" onchange="handleAiFileUpload(event)">
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                <input type="text" id="daily-search" oninput="renderDailyInputs()" placeholder="🔍 Lọc nhanh tên xã/phường..." class="bg-white dark:bg-slate-800 border rounded px-2.5 py-1 text-xs w-60">
+                <span class="text-xs font-bold text-slate-500">Chỉ tiêu: <strong id="daily-kpi-active-lbl" class="text-amber-600">Tất cả</strong></span>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-2 flex-grow">
+                <div id="daily-inputs-list" class="space-y-2">
+                    <!-- Dynamic Rows -->
+                </div>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-between items-center border-t border-slate-200">
+                <button onclick="batchSaveDailyData()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow">
+                    💾 Lưu toàn bộ số liệu ngày
+                </button>
+                <button onclick="closeDailyUpdateModal()" class="bg-slate-600 hover:bg-slate-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: AI RECONCILIATION & PREVIEW MODAL -->
+    <div id="ai-preview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🤖</span>
+                    <div>
+                        <h3 class="text-base font-bold text-amber-200 uppercase">MÀNH HÌNH ĐỐI SOÁT & XÁC NHẬN SỐ LIỆU AI</h3>
+                        <p class="text-xs text-amber-100">Kiểm tra các ô bôi nổi màu trước khi lưu chính thức vào cơ sở dữ liệu</p>
+                    </div>
+                </div>
+                <button onclick="closeAiPreviewModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-3 bg-amber-100/80 dark:bg-slate-900 border-b border-amber-300 text-xs text-amber-900 dark:text-amber-300 flex items-center gap-2">
+                <span>⚠️</span>
+                <span>AI đã phân tích dữ liệu tệp. Các ô tô màu vàng/đỏ thể hiện số liệu nghi ngờ mờ chữ/lệch dòng. Hãy điều chỉnh nếu cần.</span>
+            </div>
+
+            <div class="p-4 overflow-y-auto flex-grow space-y-2">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead class="bg-slate-100 dark:bg-slate-900 sticky top-0 font-bold uppercase text-[10px]">
+                        <tr>
+                            <th class="p-2 border">STT</th>
+                            <th class="p-2 border">Đơn vị (Xã/Phường)</th>
+                            <th class="p-2 border text-right">Chỉ tiêu giao</th>
+                            <th class="p-2 border text-right">Số liệu AI trích xuất</th>
+                            <th class="p-2 border text-center">Trạng thái AI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ai-preview-table-body" class="font-bold">
+                        <!-- Dynamic extracted rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-between items-center border-t border-slate-200">
+                <span class="text-[11px] text-slate-400">*Sau khi xác nhận, số liệu sẽ cập nhật vào 102 xã/phường</span>
+                <div class="flex gap-2">
+                    <button onclick="confirmAiExtractedData()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow">
+                        ✅ Đồng ý & Lưu chính thức
+                    </button>
+                    <button onclick="closeAiPreviewModal()" class="bg-slate-500 hover:bg-slate-400 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                        Hủy bỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: AI FORMAL REPORT DRAFT GENERATOR -->
+    <div id="ai-report-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📝</span>
+                    <div>
+                        <h3 class="text-base font-bold text-amber-200 uppercase">TẠO DỰ THẢO BÁO CÁO HÀNH CHÍNH BẰNG AI</h3>
+                        <p class="text-xs text-amber-100">Tự động tổng hợp dữ liệu 102 đơn vị & soạn văn bản chỉ đạo đôn đốc</p>
+                    </div>
+                </div>
+                <button onclick="closeAiReportModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 flex items-center justify-between gap-2">
+                <button onclick="generateAiDraftReport()" id="btn-run-ai-report" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs shadow flex items-center gap-1.5">
+                    <span>✨</span> Bắt đầu tạo Báo cáo AI
+                </button>
+                <button onclick="copyAiReportText()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs">
+                    📋 Sao chép văn bản
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto flex-grow bg-amber-50/30 dark:bg-slate-900 font-serif leading-relaxed text-sm text-slate-900 dark:text-slate-100" id="ai-report-output-box">
+                <p class="text-slate-400 text-center italic py-10">
+                    Nhấp vào nút "Bắt đầu tạo Báo cáo AI" để hệ thống phân tích số liệu thực tế 102 địa bàn và sinh văn bản báo cáo theo chuẩn công văn hành chính Ngành...
+                </p>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-end border-t border-slate-200">
+                <button onclick="closeAiReportModal()" class="bg-slate-600 hover:bg-slate-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: ARCHIVE & EXPORT REPORTS MODAL -->
+    <div id="archive-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📁</span>
+                    <div>
+                        <h3 class="text-base font-bold text-amber-200 uppercase">KHO LƯU TRỮ LỊCH SỬ & XUẤT BÁO CÁO</h3>
+                        <p class="text-xs text-amber-100">Quản lý các mốc số liệu đã lưu & xuất dữ liệu Excel</p>
+                    </div>
+                </div>
+                <button onclick="closeArchiveModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-4">
+                <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-xs uppercase text-amber-700">Xuất Báo Cáo Thống Kê Tổng Hợp</h4>
+                        <p class="text-xs text-slate-500">Tải xuống toàn bộ bảng dữ liệu 102 xã/phường hiện tại</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1">
+                            <span>📊</span> Xuất Excel (.xlsx)
+                        </button>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-xs uppercase text-slate-600">Lịch sử bản lưu số liệu theo ngày:</h4>
+                <div id="archive-history-list" class="space-y-2">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-end border-t border-slate-200">
+                <button onclick="closeArchiveModal()" class="bg-slate-600 hover:bg-slate-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: BANNER DOWNLOAD CONFIRMATION MODAL -->
+    <div id="download-confirm-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-amber-500 overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="bg-gradient-to-r from-red-900 via-red-800 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📸</span>
+                    <h3 class="text-sm font-bold text-amber-200 uppercase">XÁC NHẬN XUẤT BANNER</h3>
+                </div>
+                <button onclick="closeBannerDownloadModal()" class="text-amber-200 hover:text-white text-xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-5 text-slate-800 dark:text-slate-100 text-sm space-y-3">
+                <p class="font-bold text-center text-slate-700 dark:text-slate-200">
+                    Bạn có chắc chắn muốn tiến hành xuất file hình ảnh banner này không?
+                </p>
+                <div class="bg-amber-50 dark:bg-slate-900 p-3 rounded-xl border border-amber-200 text-xs text-amber-900 dark:text-amber-300 flex items-center gap-2">
+                    <span>💡</span>
+                    <span>Hệ thống sẽ chụp lại khung Banner Công an tỉnh Đắk Lắk nền kem trống đồng với chất lượng độ phân giải cao PNG.</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-end items-center gap-2 border-t border-slate-200">
+                <button onclick="closeBannerDownloadModal()" class="bg-slate-500 hover:bg-slate-400 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                    Hủy bỏ
+                </button>
+                <button onclick="executeBannerDownload()" id="btn-confirm-download-action" class="bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold px-5 py-1.5 rounded-lg text-xs shadow-md transition flex items-center gap-1.5">
+                    <span>📥</span> <span>Đồng ý & Tải về</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 7: KPI ADMIN & TIÊU CHÍ ĐÁNH GIÁ MODAL -->
+    <div id="kpi-admin-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full border border-amber-500 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-red-900 to-amber-800 text-white p-3.5 flex justify-between items-center border-b border-amber-400">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">⚙️</span>
+                    <div>
+                        <h3 class="text-base font-bold text-amber-200 uppercase">QUẢN LÝ CHỈ TIÊU & THIẾT LẬP TIÊU CHÍ ĐÁNH GIÁ</h3>
+                        <p class="text-xs text-amber-100">Điền tên chỉ tiêu & Ngưỡng % riêng cho các mức: 🟢 Tốt, 🟡 Trung bình, 🔴 Chậm</p>
+                    </div>
+                </div>
+                <button onclick="closeKpiAdminModal()" class="text-amber-200 hover:text-white text-2xl font-bold px-2 py-0.5 rounded hover:bg-red-800">&times;</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-4">
+                <!-- Add New KPI with Criteria Inputs -->
+                <div class="bg-amber-50 dark:bg-slate-900 p-3.5 rounded-xl border border-amber-300 space-y-2.5">
+                    <h4 class="font-bold text-xs uppercase text-amber-800 dark:text-amber-400">➕ Thêm Chỉ Tiêu Mới & Cấu Hình Tiêu Chí:</h4>
+                    
+                    <div class="space-y-2">
+                        <input type="text" id="new-kpi-name" placeholder="Nhập tên chỉ tiêu nghiệp vụ mới..." class="bg-white dark:bg-slate-800 border rounded px-2.5 py-1 text-xs w-full font-bold">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold">
+                            <div class="flex items-center gap-1 bg-emerald-50 dark:bg-slate-800 p-1.5 rounded border border-emerald-300">
+                                <span class="text-emerald-700">🟢 Ngưỡng Tốt ≥</span>
+                                <input type="number" id="new-kpi-thresh-good" value="80" min="1" max="100" class="w-14 border rounded px-1 text-center font-bold text-emerald-700">
+                                <span>%</span>
+                            </div>
+                            <div class="flex items-center gap-1 bg-amber-50 dark:bg-slate-800 p-1.5 rounded border border-amber-300">
+                                <span class="text-amber-700">🟡 Ngưỡng TB ≥</span>
+                                <input type="number" id="new-kpi-thresh-avg" value="50" min="1" max="99" class="w-14 border rounded px-1 text-center font-bold text-amber-700">
+                                <span>%</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-red-50 dark:bg-slate-800 p-1.5 rounded border border-red-300 text-red-700">
+                                <span>🔴 Chậm: &lt; Ngưỡng TB</span>
+                                <button onclick="addNewKpi()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-3 py-1 rounded-lg shadow">
+                                    Thêm mới
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-xs uppercase text-slate-600">Danh Sách Chỉ Tiêu & Tiêu Chí Đánh Giá Riêng:</h4>
+                <div id="admin-kpis-container" class="space-y-3">
+                    <!-- Dynamic List with Good / Avg / Slow inputs -->
+                </div>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-3 flex justify-between items-center border-t border-slate-200">
+                <button onclick="resetDefaultData()" class="bg-red-800 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow">
+                    ⚠️ Khôi phục dữ liệu gốc
+                </button>
+                <button onclick="closeKpiAdminModal()" class="bg-slate-600 hover:bg-slate-500 text-white font-bold px-4 py-1.5 rounded-lg text-xs">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR NAVIGATION MENU -->
+    <div id="sidebar-nav" class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl border-r border-amber-500/30 flex flex-col justify-between">
+        <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="font-bold text-amber-400 text-sm uppercase">DANH MỤC HỆ THỐNG</h3>
+                <button onclick="toggleSidebarNav()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+            </div>
+            <nav class="space-y-2 text-xs font-bold">
+                <a href="#" onclick="toggleSidebarNav()" class="block p-2 rounded bg-amber-600 text-white">📊 Tổng quan Bảng điều khiển</a>
+                <a href="#" onclick="openDailyUpdateModal(); toggleSidebarNav();" class="block p-2 rounded hover:bg-slate-800 text-slate-300">📝 Cập nhật số liệu & Tệp AI</a>
+                <a href="#" onclick="openAiReportModal(); toggleSidebarNav();" class="block p-2 rounded hover:bg-slate-800 text-slate-300">🤖 Dự thảo Báo cáo AI</a>
+                <a href="#" onclick="openArchiveModal(); toggleSidebarNav();" class="block p-2 rounded hover:bg-slate-800 text-slate-300">📁 Kho lưu trữ & Báo cáo</a>
+                <a href="#" onclick="openKpiAdminModal(); toggleSidebarNav();" class="block p-2 rounded hover:bg-slate-800 text-slate-300">⚙️ Quản lý Chỉ tiêu & Tiêu chí</a>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-800 text-[11px] text-slate-400 text-center">
+            Công an tỉnh Đắk Lắk © 2026
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // ==========================================
+        // 1. OFFICIAL LIST OF 102 COMMUNES (STT #1 TO #102)
+        // ==========================================
+        const OFFICIAL_102_COMMUNES = [
+            { stt: 1, name: "Phường Bình Kiến" },
+            { stt: 2, name: "Phường Buôn Hồ" },
+            { stt: 3, name: "Phường Buôn Ma Thuột" },
+            { stt: 4, name: "Phường Cư Bao" },
+            { stt: 5, name: "Phường Đông Hòa" },
+            { stt: 6, name: "Phường Ea Kao" },
+            { stt: 7, name: "Phường Hòa Hiệp" },
+            { stt: 8, name: "Phường Phú Yên" },
+            { stt: 9, name: "Phường Sông Cầu" },
+            { stt: 10, name: "Phường Tân An" },
+            { stt: 11, name: "Phường Tân Lập" },
+            { stt: 12, name: "Phường Tuy Hòa" },
+            { stt: 13, name: "Phường Thành Nhất" },
+            { stt: 14, name: "Phường Xuân Đài" },
+            { stt: 15, name: "Xã Buôn Đôn" },
+            { stt: 16, name: "Xã Cuôr Đăng" },
+            { stt: 17, name: "Xã Cư M'gar" },
+            { stt: 18, name: "Xã Cư M'ta" },
+            { stt: 19, name: "Xã Cư Pong" },
+            { stt: 20, name: "Xã Cư Prao" },
+            { stt: 21, name: "Xã Cư Pui" },
+            { stt: 22, name: "Xã Cư Yang" },
+            { stt: 23, name: "Xã Dang Kang" },
+            { stt: 24, name: "Xã Dliê Ya" },
+            { stt: 25, name: "Xã Dray Bhăng" },
+            { stt: 26, name: "Xã Dur Kmăl" },
+            { stt: 27, name: "Xã Đắk Liêng" },
+            { stt: 28, name: "Xã Đắk Phoi" },
+            { stt: 29, name: "Xã Đồng Xuân" },
+            { stt: 30, name: "Xã Đức Bình" },
+            { stt: 31, name: "Xã Ea Bá" },
+            { stt: 32, name: "Xã Ea Bung" },
+            { stt: 33, name: "Xã Ea Drăng" },
+            { stt: 34, name: "Xã Ea Drông" },
+            { stt: 35, name: "Xã Ea H'Leo" },
+            { stt: 36, name: "Xã Ea Hiao" },
+            { stt: 37, name: "Xã Ea Kar" },
+            { stt: 38, name: "Xã Ea Kiết" },
+            { stt: 39, name: "Xã Ea Kly" },
+            { stt: 40, name: "Xã Ea Knốp" },
+            { stt: 41, name: "Xã Ea Knuếc" },
+            { stt: 42, name: "Xã Ea Ktur" },
+            { stt: 43, name: "Xã Ea Khăl" },
+            { stt: 44, name: "Xã Ea Ly" },
+            { stt: 45, name: "Xã Ea M'Droh" },
+            { stt: 46, name: "Xã Ea Na" },
+            { stt: 47, name: "Xã Ea Ning" },
+            { stt: 48, name: "Xã Ea Nuôl" },
+            { stt: 49, name: "Xã Ea Ô" },
+            { stt: 50, name: "Xã Ea Păl" },
+            { stt: 51, name: "Xã Ea Phê" },
+            { stt: 52, name: "Xã Ea Riêng" },
+            { stt: 53, name: "Xã Ea Rốk" },
+            { stt: 54, name: "Xã Ea Súp" },
+            { stt: 55, name: "Xã Ea Tul" },
+            { stt: 56, name: "Xã Ea Trang" },
+            { stt: 57, name: "Xã Ea Wer" },
+            { stt: 58, name: "Xã Ea Wy" },
+            { stt: 59, name: "Xã Hòa Mỹ" },
+            { stt: 60, name: "Xã Hòa Phú" },
+            { stt: 61, name: "Xã Hòa Sơn" },
+            { stt: 62, name: "Xã Hòa Thịnh" },
+            { stt: 63, name: "Xã Hòa Xuân" },
+            { stt: 64, name: "Xã Ia Lốp" },
+            { stt: 65, name: "Xã Ia R'vê" },
+            { stt: 66, name: "Xã Krông Á" },
+            { stt: 67, name: "Xã Krông Ana" },
+            { stt: 68, name: "Xã Krông Bông" },
+            { stt: 69, name: "Xã Krông Búk" },
+            { stt: 70, name: "Xã Krông Năng" },
+            { stt: 71, name: "Xã Krông Nô" },
+            { stt: 72, name: "Xã Krông Pắc" },
+            { stt: 73, name: "Xã Liên Sơn Lắk" },
+            { stt: 74, name: "Xã M'Đrắk" },
+            { stt: 75, name: "Xã Nam Ka" },
+            { stt: 76, name: "Xã Ô Loan" },
+            { stt: 77, name: "Xã Pơng Drang" },
+            { stt: 78, name: "Xã Phú Hòa 1" },
+            { stt: 79, name: "Xã Phú Hòa 2" },
+            { stt: 80, name: "Xã Phú Mỡ" },
+            { stt: 81, name: "Xã Phú Xuân" },
+            { stt: 82, name: "Xã Quảng Phú" },
+            { stt: 83, name: "Xã Sông Hinh" },
+            { stt: 84, name: "Xã Sơn Hòa" },
+            { stt: 85, name: "Xã Sơn Thành" },
+            { stt: 86, name: "Xã Suối Trai" },
+            { stt: 87, name: "Xã Tam Giang" },
+            { stt: 88, name: "Xã Tân Tiến" },
+            { stt: 89, name: "Xã Tây Hòa" },
+            { stt: 90, name: "Xã Tây Sơn" },
+            { stt: 91, name: "Xã Tuy An Bắc" },
+            { stt: 92, name: "Xã Tuy An Đông" },
+            { stt: 93, name: "Xã Tuy An Nam" },
+            { stt: 94, name: "Xã Tuy An Tây" },
+            { stt: 95, name: "Xã Vân Hòa" },
+            { stt: 96, name: "Xã Vụ Bổn" },
+            { stt: 97, name: "Xã Xuân Cảnh" },
+            { stt: 98, name: "Xã Xuân Lãnh" },
+            { stt: 99, name: "Xã Xuân Lộc" },
+            { stt: 100, name: "Xã Xuân Phước" },
+            { stt: 101, name: "Xã Xuân Thọ" },
+            { stt: 102, name: "Xã Yang Mao" }
+        ];
+
+        // Default 4 KPIs with custom "Tốt" and "Trung bình" threshold % criteria
+        const DEFAULT_KPIS = [
+            { id: 'kpi_1', name: '1. Kích hoạt định danh điện tử VNeID mức độ 2', threshGood: 80, threshAvg: 50 },
+            { id: 'kpi_2', name: '2. Tiếp nhận, giải quyết thủ tục cư trú (TT, KT, CT10)', threshGood: 100, threshAvg: 70 },
+            { id: 'kpi_3', name: '3. Làm sạch dữ liệu dân cư', threshGood: 70, threshAvg: 45.4 },
+            { id: 'kpi_4', name: '4. Số hóa tàng thư cư trú', threshGood: 90, threshAvg: 60 }
+        ];
+
+        // App State
+        let appState = {
+            kpis: [],
+            selectedKpiId: 'all',
+            selectedPeriod: 'week',
+            selectedDate: new Date().toISOString().split('T')[0],
+            searchQuery: '',
+            tableFilterStatus: 'all',
+            mapZoom: 1.0,
+            mapFilter: 'all',
+            communeData: {},
+            kioskRunning: false,
+            kioskStep: 0,
+            kioskInterval: null
+        };
+
+        let currentModalStt = null;
+        let aiExtractedBuffer = [];
+
+        // Helper: Format Date as DD/MM/YY
+        function formatDDMMYY(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = String(d.getFullYear()).slice(-2);
+            return `${day}/${month}/${year}`;
+        }
+
+        // DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            initDateDefault();
+            loadState();
+            renderKpiSelectOptions();
+            renderDashboard();
+        });
+
+        function initDateDefault() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-select-picker').value = today;
+            appState.selectedDate = today;
+            document.getElementById('date-formatted-badge').innerText = formatDDMMYY(today);
+        }
+
+        // State Load/Save
+        function loadState() {
+            const saved = localStorage.getItem('daklak_kpi_state_v6_clean');
+            if (saved) {
+                try { appState = JSON.parse(saved); } catch (e) { generateDefaultState(); }
+            } else {
+                generateDefaultState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('daklak_kpi_state_v6_clean', JSON.stringify(appState));
+        }
+
+        function generateDefaultState() {
+            appState.kpis = JSON.parse(JSON.stringify(DEFAULT_KPIS));
+            appState.communeData = {};
+
+            OFFICIAL_102_COMMUNES.forEach(c => {
+                const statsObj = {};
+                appState.kpis.forEach(kpi => {
+                    const giao = 1000;
+                    let factor = 0.82;
+                    if (c.stt % 7 === 0) factor = 0.38; // Red
+                    else if (c.stt % 3 === 0) factor = 0.62; // Yellow
+                    else factor = 0.88; // Green
+
+                    const da_lam = Math.round(giao * (factor + (Math.random() * 0.08 - 0.04)));
+                    statsObj[kpi.id] = { giao, da_lam: Math.min(giao, Math.max(0, da_lam)) };
+                });
+
+                const daysAgo = (c.stt === 18 || c.stt === 32) ? 4 : 0;
+                appState.communeData[c.stt] = { stats: statsObj, last_updated_days_ago: daysAgo };
+            });
+
+            saveState();
+        }
+
+        // Active Evaluation Thresholds
+        function getActiveThresholds(kpiId) {
+            if (kpiId === 'all') {
+                if (!appState.kpis || appState.kpis.length === 0) return { good: 80, avg: 50 };
+                const sumGood = appState.kpis.reduce((acc, k) => acc + (k.threshGood || 80), 0);
+                const sumAvg = appState.kpis.reduce((acc, k) => acc + (k.threshAvg || 50), 0);
+                return {
+                    good: Math.round(sumGood / appState.kpis.length),
+                    avg: Math.round(sumAvg / appState.kpis.length)
+                };
+            }
+            const k = appState.kpis.find(x => x.id === kpiId);
+            return k ? { good: k.threshGood || 80, avg: k.threshAvg || 50 } : { good: 80, avg: 50 };
+        }
+
+        // Stats Computation
+        function getCommuneStats(stt, kpiId) {
+            const data = appState.communeData[stt] || { stats: {}, last_updated_days_ago: 0 };
+            let totalGiao = 0;
+            let totalDaLam = 0;
+
+            if (kpiId === 'all') {
+                appState.kpis.forEach(k => {
+                    const s = data.stats[k.id] || { giao: 1000, da_lam: 0 };
+                    totalGiao += s.giao;
+                    totalDaLam += s.da_lam;
+                });
+            } else {
+                const s = data.stats[kpiId] || { giao: 1000, da_lam: 0 };
+                totalGiao = s.giao;
+                totalDaLam = s.da_lam;
+            }
+
+            const rawPercent = totalGiao > 0 ? (totalDaLam / totalGiao) * 100 : 0;
+            const percent = parseFloat(rawPercent.toFixed(1));
+
+            const thresh = getActiveThresholds(kpiId);
+
+            let status = 'red';
+            if (percent >= thresh.good) status = 'green';
+            else if (percent >= thresh.avg) status = 'yellow';
+
+            return { 
+                giao: totalGiao, 
+                da_lam: totalDaLam, 
+                percent, 
+                status, 
+                threshGood: thresh.good,
+                threshAvg: thresh.avg,
+                isFrozen: data.last_updated_days_ago >= 3 
+            };
+        }
+
+        // Main Dashboard Render
+        function renderDashboard() {
+            const currentKpiId = appState.selectedKpiId;
+            const thresh = getActiveThresholds(currentKpiId);
+
+            let greenCount = 0, yellowCount = 0, redCount = 0, frozenCount = 0;
+            let totalProvincialGiao = 0;
+            let totalProvincialDaLam = 0;
+
+            const computedList = OFFICIAL_102_COMMUNES.map(c => {
+                const res = getCommuneStats(c.stt, currentKpiId);
+                if (res.status === 'green') greenCount++;
+                else if (res.status === 'yellow') yellowCount++;
+                else redCount++;
+
+                if (res.isFrozen) frozenCount++;
+
+                totalProvincialGiao += res.giao;
+                totalProvincialDaLam += res.da_lam;
+
+                return { ...c, computed: res };
+            });
+
+            // Update Labels with Dynamic Thresholds
+            document.getElementById('stat-green-label').innerText = `🟢 Đạt tốt (≥${thresh.good}%)`;
+            document.getElementById('stat-yellow-label').innerText = `🟡 Trung bình (${thresh.avg}%-${thresh.good}%)`;
+            document.getElementById('legend-green-text').innerText = `🟢 Tốt (≥${thresh.good}%)`;
+            document.getElementById('legend-yellow-text').innerText = `🟡 TB (${thresh.avg}%-${thresh.good}%)`;
+            document.getElementById('badge-good-threshold').innerText = `≥${thresh.good}%`;
+            document.getElementById('badge-slow-threshold').innerText = `<${thresh.avg}%`;
+
+            // Update Header Cards
+            document.getElementById('stat-total').innerText = computedList.length;
+
+            const total = computedList.length || 1;
+            document.getElementById('stat-green-count').innerText = greenCount;
+            document.getElementById('stat-green-percent').innerText = `(${((greenCount / total) * 100).toFixed(1)}%)`;
+
+            document.getElementById('stat-yellow-count').innerText = yellowCount;
+            document.getElementById('stat-yellow-percent').innerText = `(${((yellowCount / total) * 100).toFixed(1)}%)`;
+
+            document.getElementById('stat-red-count').innerText = redCount;
+            document.getElementById('stat-red-percent').innerText = `(${((redCount / total) * 100).toFixed(1)}%)`;
+            document.getElementById('stat-frozen-count').innerText = `${frozenCount} xã ⚠️`;
+
+            const overallPct = totalProvincialGiao > 0 ? ((totalProvincialDaLam / totalProvincialGiao) * 100).toFixed(1) : '0.0';
+            document.getElementById('stat-overall-percent').innerText = `${overallPct}%`;
+
+            const activeKpiObj = appState.kpis.find(k => k.id === currentKpiId);
+            document.getElementById('map-active-kpi-title').innerText = `Chỉ tiêu: ${activeKpiObj ? activeKpiObj.name : 'Tất cả (Tổng hợp)'} (Tiêu chí Tốt: ≥${thresh.good}%, TB: ≥${thresh.avg}%)`;
+
+            // Render Modules
+            renderHeatmapSVG(computedList);
+            renderLeaderboards(computedList);
+            renderTable(computedList);
+        }
+
+        // Render Heatmap SVG Grid
+        function renderHeatmapSVG(computedList) {
+            const svg = document.getElementById('daklak-heatmap-svg');
+            const mapFilter = appState.mapFilter;
+
+            const cols = 11;
+            const tileW = 92;
+            const tileH = 75;
+            const gap = 8;
+            const startX = 15;
+            const startY = 15;
+
+            let svgContent = `<g id="zoom-group" transform="scale(${appState.mapZoom})">`;
+
+            computedList.forEach((item, idx) => {
+                const col = idx % cols;
+                const row = Math.floor(idx / cols);
+
+                const x = startX + col * (tileW + gap);
+                const y = startY + row * (tileH + gap);
+
+                let fillColor = '#ef4444';
+                if (item.computed.status === 'green') fillColor = '#10b981';
+                else if (item.computed.status === 'yellow') fillColor = '#f59e0b';
+
+                let strokeColor = '#ffffff';
+                let strokeWidth = '1.2';
+
+                if (item.computed.isFrozen) {
+                    strokeColor = '#f87171';
+                    strokeWidth = '2.5';
+                }
+
+                let opacity = '1';
+                if (mapFilter !== 'all' && item.computed.status !== mapFilter) {
+                    opacity = '0.15';
+                }
+
+                const shortName = item.name.replace(/(Phường|Xã)\s+/, '');
+
+                svgContent += `
+                <g class="map-tile" opacity="${opacity}" onclick="openCommuneModal(${item.stt})" onmousemove="handleTileHover(event, ${item.stt})" onmouseleave="handleTileLeave()">
+                    <rect x="${x}" y="${y}" width="${tileW}" height="${tileH}" rx="8" ry="8" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}" class="shadow-md" />
+                    <!-- STT Pill -->
+                    <rect x="${x + 4}" y="${y + 4}" width="26" height="15" rx="3" fill="#0f172a" fill-opacity="0.6"/>
+                    <text x="${x + 17}" y="${y + 15}" font-size="9" font-weight="900" fill="#fde047" text-anchor="middle">#${item.stt}</text>
+                    ${item.computed.isFrozen ? `<text x="${x + tileW - 12}" y="${y + 15}" font-size="10">⚠️</text>` : ''}
+                    
+                    <!-- Short Name -->
+                    <text x="${x + tileW/2}" y="${y + 38}" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">${shortName}</text>
+                    
+                    <!-- Percent Badge -->
+                    <rect x="${x + tileW/2 - 24}" y="${y + 50}" width="48" height="17" rx="4" fill="#0f172a" fill-opacity="0.7"/>
+                    <text x="${x + tileW/2}" y="${y + 62}" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">${item.computed.percent}%</text>
+                </g>`;
+            });
+
+            svgContent += `</g>`;
+            svg.innerHTML = svgContent;
+        }
+
+        // Heatmap Tooltip
+        function handleTileHover(evt, stt) {
+            const item = OFFICIAL_102_COMMUNES.find(c => c.stt === stt);
+            if (!item) return;
+
+            const stats = getCommuneStats(stt, appState.selectedKpiId);
+            const tooltip = document.getElementById('map-tooltip');
+
+            document.getElementById('tt-name').innerText = item.name;
+            document.getElementById('tt-stt').innerText = `STT #${item.stt}`;
+            document.getElementById('tt-giao').innerText = stats.giao.toLocaleString();
+            document.getElementById('tt-dalam').innerText = stats.da_lam.toLocaleString();
+            document.getElementById('tt-percent').innerText = `${stats.percent}%`;
+
+            const warnEl = document.getElementById('tt-frozen-warn');
+            if (stats.isFrozen) warnEl.classList.remove('hidden');
+            else warnEl.classList.add('hidden');
+
+            const badgeEl = document.getElementById('tt-badge');
+            if (stats.status === 'green') {
+                badgeEl.className = 'mt-1.5 text-center py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-600 text-white';
+                badgeEl.innerText = `🟢 Đạt tốt (≥${stats.threshGood}%)`;
+            } else if (stats.status === 'yellow') {
+                badgeEl.className = 'mt-1.5 text-center py-0.5 rounded text-[10px] font-bold uppercase bg-amber-600 text-white';
+                badgeEl.innerText = `🟡 Trung bình (${stats.threshAvg}%-${stats.threshGood}%)`;
+            } else {
+                badgeEl.className = 'mt-1.5 text-center py-0.5 rounded text-[10px] font-bold uppercase bg-red-600 text-white';
+                badgeEl.innerText = `🔴 Chậm (<${stats.threshAvg}%)`;
+            }
+
+            const container = evt.currentTarget.ownerSVGElement.getBoundingClientRect();
+            let x = evt.clientX - container.left + 15;
+            let y = evt.clientY - container.top + 15;
+
+            if (x + 260 > container.width) x -= 270;
+            if (y + 160 > container.height) y -= 170;
+
+            tooltip.style.left = `${Math.max(10, x)}px`;
+            tooltip.style.top = `${Math.max(10, y)}px`;
+            tooltip.classList.remove('hidden');
+            setTimeout(() => tooltip.style.opacity = '1', 10);
+        }
+
+        function handleTileLeave() {
+            const tooltip = document.getElementById('map-tooltip');
+            tooltip.style.opacity = '0';
+            tooltip.classList.add('hidden');
+        }
+
+        function filterMap(type) {
+            appState.mapFilter = type;
+            ['all', 'green', 'yellow', 'red'].forEach(t => {
+                const btn = document.getElementById(`btn-map-${t}`);
+                if (t === type) btn.className = 'px-2 py-0.5 rounded bg-amber-600 text-white shadow font-bold';
+                else btn.className = 'px-2 py-0.5 rounded hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold';
+            });
+            renderDashboard();
+        }
+
+        function zoomMap(delta) {
+            appState.mapZoom = Math.min(1.8, Math.max(0.6, appState.mapZoom + delta));
+            renderDashboard();
+        }
+
+        function resetMapZoom() {
+            appState.mapZoom = 1.0;
+            renderDashboard();
+        }
+
+        // Leaderboards
+        function renderLeaderboards(computedList) {
+            const sortedGood = [...computedList].sort((a, b) => b.computed.percent - a.computed.percent).slice(0, 10);
+            const sortedSlow = [...computedList].sort((a, b) => a.computed.percent - b.computed.percent).slice(0, 10);
+
+            const goodContainer = document.getElementById('top10-good-list');
+            let goodHtml = '';
+            sortedGood.forEach((item, rank) => {
+                let badge = `#${rank + 1}`;
+                if (rank === 0) badge = `🥇`;
+                else if (rank === 1) badge = `🥈`;
+                else if (rank === 2) badge = `🥉`;
+
+                goodHtml += `
+                <div onclick="openCommuneModal(${item.stt})" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between cursor-pointer transition">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <span class="w-4 text-center">${badge}</span>
+                        <span class="truncate">${item.name}</span>
+                    </div>
+                    <span class="text-emerald-600 dark:text-emerald-400 whitespace-nowrap">${item.computed.percent}%</span>
+                </div>`;
+            });
+            goodContainer.innerHTML = goodHtml;
+
+            const slowContainer = document.getElementById('top10-slow-list');
+            let slowHtml = '';
+            sortedSlow.forEach((item, rank) => {
+                slowHtml += `
+                <div onclick="openCommuneModal(${item.stt})" class="p-1.5 rounded-lg bg-red-50 dark:bg-red-950/40 hover:bg-red-100 border border-red-200 dark:border-red-800 flex items-center justify-between cursor-pointer transition">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <span class="w-4 text-center text-red-600">🚨</span>
+                        <span class="truncate">${item.name}</span>
+                    </div>
+                    <span class="text-red-600 dark:text-red-400 whitespace-nowrap">${item.computed.percent}%</span>
+                </div>`;
+            });
+            slowContainer.innerHTML = slowHtml;
+        }
+
+        // Table Render with Filter & Search
+        function filterTableStatus(status) {
+            appState.tableFilterStatus = status;
+            ['all', 'green', 'yellow', 'red'].forEach(s => {
+                const btn = document.getElementById(`tbl-btn-${s}`);
+                if (btn) {
+                    if (s === status) btn.className = 'px-2 py-0.5 rounded bg-amber-600 text-white shadow font-bold';
+                    else btn.className = 'px-2 py-0.5 rounded hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold';
+                }
+            });
+            renderDashboard();
+        }
+
+        function renderTable(computedList) {
+            const tbody = document.getElementById('commune-table-body');
+            const query = appState.searchQuery.toLowerCase().trim();
+            const statusFilter = appState.tableFilterStatus;
+
+            const filtered = computedList.filter(c => {
+                const matchesSearch = c.name.toLowerCase().includes(query);
+                const matchesStatus = statusFilter === 'all' || c.computed.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Không tìm thấy địa bàn phù hợp.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(item => {
+                const p = item.computed.percent;
+                let badgeClass = 'bg-red-100 text-red-700';
+                let badgeLabel = '🔴 Chậm';
+
+                if (item.computed.status === 'green') {
+                    badgeClass = 'bg-emerald-100 text-emerald-700';
+                    badgeLabel = '🟢 Tốt';
+                } else if (item.computed.status === 'yellow') {
+                    badgeClass = 'bg-amber-100 text-amber-700';
+                    badgeLabel = '🟡 TB';
+                }
+
+                html += `
+                <tr onclick="openCommuneModal(${item.stt})" class="hover:bg-amber-50 dark:hover:bg-slate-700 cursor-pointer transition">
+                    <td class="p-2 text-center text-slate-400">#${item.stt}</td>
+                    <td class="p-2">${item.name} ${item.computed.isFrozen ? '⚠️' : ''}</td>
+                    <td class="p-2 text-right text-slate-600 dark:text-slate-300">${item.computed.giao.toLocaleString()}</td>
+                    <td class="p-2 text-right text-emerald-600">${item.computed.da_lam.toLocaleString()}</td>
+                    <td class="p-2 text-center">
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-amber-500 h-full" style="width: ${Math.min(100, p)}%"></div>
+                            </div>
+                            <span class="text-[10px] w-9 text-right font-black">${p}%</span>
+                        </div>
+                    </td>
+                    <td class="p-2 text-center">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${badgeLabel}</span>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Period & Filter Switches
+        function setPeriod(period) {
+            appState.selectedPeriod = period;
+            ['week', 'month', 'quarter', 'year'].forEach(p => {
+                const btn = document.getElementById(`period-${p}`);
+                if (p === period) btn.className = 'px-2 py-0.5 rounded text-xs font-bold bg-amber-600 text-white';
+                else btn.className = 'px-2 py-0.5 rounded text-xs font-bold hover:bg-red-800 text-amber-200';
+            });
+
+            const deltaBadge = document.getElementById('period-delta-badge');
+            const lbl = document.getElementById('stat-overall-period-lbl');
+
+            if (period === 'week') {
+                deltaBadge.innerText = '+2.4% 🟢';
+                lbl.innerText = 'Kỳ báo cáo: Tuần này';
+            } else if (period === 'month') {
+                deltaBadge.innerText = '+5.8% 🟢';
+                lbl.innerText = 'Kỳ báo cáo: Tháng này';
+            } else if (period === 'quarter') {
+                deltaBadge.innerText = '+12.1% 🟢';
+                lbl.innerText = 'Kỳ báo cáo: Quý này';
+            } else {
+                deltaBadge.innerText = '+24.5% 🟢';
+                lbl.innerText = 'Kỳ báo cáo: Năm 2026';
+            }
+
+            renderDashboard();
+        }
+
+        function handleKpiChange(val) {
+            appState.selectedKpiId = val;
+            saveState();
+            renderDashboard();
+        }
+
+        function handleDateChange(val) {
+            appState.selectedDate = val;
+            document.getElementById('date-formatted-badge').innerText = formatDDMMYY(val);
+            renderDashboard();
+        }
+
+        function handleSearch(val) {
+            appState.searchQuery = val;
+            renderDashboard();
+        }
+
+        function renderKpiSelectOptions() {
+            const select = document.getElementById('kpi-select-filter');
+            let html = `<option value="all">⭐ Tất cả chỉ tiêu (Tổng hợp)</option>`;
+            appState.kpis.forEach(k => {
+                html += `<option value="${k.id}">${k.name} (≥${k.threshGood || 80}%)</option>`;
+            });
+            select.innerHTML = html;
+            select.value = appState.selectedKpiId;
+        }
+
+        // Kiosk Auto Rotation Mode
+        function toggleKioskMode() {
+            const btn = document.getElementById('btn-kiosk-toggle');
+            if (appState.kioskRunning) {
+                clearInterval(appState.kioskInterval);
+                appState.kioskRunning = false;
+                document.getElementById('kiosk-lbl').innerText = 'Trình chiếu';
+                btn.classList.remove('bg-amber-600', 'text-white');
+            } else {
+                appState.kioskRunning = true;
+                document.getElementById('kiosk-lbl').innerText = 'Dừng trình chiếu';
+                btn.classList.add('bg-amber-600', 'text-white');
+
+                appState.kioskInterval = setInterval(() => {
+                    appState.kioskStep = (appState.kioskStep + 1) % 3;
+                    const step1 = document.getElementById('kiosk-step-1');
+                    const step2 = document.getElementById('kiosk-step-2');
+                    const step3 = document.getElementById('kiosk-step-3');
+
+                    [step1, step2, step3].forEach(el => el.classList.remove('ring-4', 'ring-amber-500'));
+
+                    if (appState.kioskStep === 0) step1.classList.add('ring-4', 'ring-amber-500');
+                    else if (appState.kioskStep === 1) step2.classList.add('ring-4', 'ring-amber-500');
+                    else step3.classList.add('ring-4', 'ring-amber-500');
+
+                }, 8000);
+            }
+        }
+
+        // Banner Functions
+        function openBannerDownloadModal() {
+            document.getElementById('download-confirm-modal').classList.remove('hidden');
+        }
+
+        function closeBannerDownloadModal() {
+            document.getElementById('download-confirm-modal').classList.add('hidden');
+        }
+
+        function executeBannerDownload() {
+            const btn = document.getElementById('btn-confirm-download-action');
+            btn.innerText = '⏳ Đang khởi tạo...';
+
+            const bannerEl = document.getElementById('header-banner');
+            html2canvas(bannerEl, { scale: 2, backgroundColor: '#fffdf2' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Banner_CongAn_DakLak_${formatDDMMYY(appState.selectedDate).replace(/\//g, '-')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                btn.innerText = '📥 Đồng ý & Tải về';
+                closeBannerDownloadModal();
+            });
+        }
+
+        function toggleHeaderCollapse() {
+            const banner = document.getElementById('header-banner');
+            const icon = document.getElementById('collapse-icon');
+            if (banner.classList.contains('min-h-[200px]')) {
+                banner.classList.remove('min-h-[200px]');
+                banner.classList.add('h-14', 'py-1');
+                icon.innerText = '▼';
+            } else {
+                banner.classList.remove('h-14', 'py-1');
+                banner.classList.add('min-h-[200px]');
+                icon.innerText = '▲';
+            }
+        }
+
+        function triggerBannerUpload() { document.getElementById('banner-file-input').click(); }
+
+        function handleBannerUpload(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('header-banner').style.backgroundImage = `url('${e.target.result}')`;
+                    document.getElementById('header-banner').style.backgroundSize = 'cover';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Modal 1: Commune Details
+        function openCommuneModal(stt) {
+            currentModalStt = stt;
+            const item = OFFICIAL_102_COMMUNES.find(c => c.stt === stt);
+            if (!item) return;
+
+            document.getElementById('modal-commune-stt').innerText = `STT #${item.stt}`;
+            document.getElementById('modal-commune-name').innerText = item.name;
+
+            const overall = getCommuneStats(stt, 'all');
+            document.getElementById('modal-overall-percent').innerText = `${overall.percent}%`;
+            document.getElementById('modal-total-giao').innerText = overall.giao.toLocaleString();
+            document.getElementById('modal-total-dalam').innerText = overall.da_lam.toLocaleString();
+
+            const data = appState.communeData[stt] || { stats: {} };
+            const container = document.getElementById('modal-kpi-list-inputs');
+            let html = '';
+
+            appState.kpis.forEach(kpi => {
+                const s = data.stats[kpi.id] || { giao: 1000, da_lam: 0 };
+                const pct = s.giao > 0 ? parseFloat(((s.da_lam / s.giao) * 100).toFixed(1)) : 0;
+                const threshGood = kpi.threshGood || 80;
+                const threshAvg = kpi.threshAvg || 50;
+
+                html += `
+                <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+                    <div class="w-full sm:w-1/2">
+                        <span class="font-bold text-xs text-slate-800 block">${kpi.name}</span>
+                        <span class="text-[10px] text-amber-700 font-bold">(🟢 Tốt: ≥${threshGood}%, 🟡 TB: ≥${threshAvg}%)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <label class="text-[10px] text-slate-400 block">Giao</label>
+                            <input type="number" id="input-giao-${kpi.id}" value="${s.giao}" class="w-16 border rounded px-1 text-xs text-right font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block">Đã đạt</label>
+                            <input type="number" id="input-dalam-${kpi.id}" value="${s.da_lam}" class="w-16 border rounded px-1 text-xs text-right font-bold text-emerald-600">
+                        </div>
+                        <span class="text-xs font-black text-amber-600 w-12 text-right">${pct}%</span>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('commune-modal').classList.remove('hidden');
+        }
+
+        function closeCommuneModal() {
+            document.getElementById('commune-modal').classList.add('hidden');
+            currentModalStt = null;
+        }
+
+        function saveCommuneDetails() {
+            if (!currentModalStt) return;
+            const data = appState.communeData[currentModalStt] || { stats: {} };
+
+            appState.kpis.forEach(kpi => {
+                const giaoVal = parseInt(document.getElementById(`input-giao-${kpi.id}`).value) || 0;
+                const dalamVal = parseInt(document.getElementById(`input-dalam-${kpi.id}`).value) || 0;
+                data.stats[kpi.id] = { giao: giaoVal, da_lam: dalamVal };
+            });
+
+            data.last_updated_days_ago = 0;
+            appState.communeData[currentModalStt] = data;
+            saveState();
+            closeCommuneModal();
+            renderDashboard();
+        }
+
+        // Modal 2: Daily Update & AI Ingestion
+        function openDailyUpdateModal() {
+            document.getElementById('daily-modal-date-label').innerText = `Ngày: ${formatDDMMYY(appState.selectedDate)}`;
+            renderDailyInputs();
+            document.getElementById('daily-update-modal').classList.remove('hidden');
+        }
+
+        function closeDailyUpdateModal() {
+            document.getElementById('daily-update-modal').classList.add('hidden');
+            renderDashboard();
+        }
+
+        function renderDailyInputs() {
+            const container = document.getElementById('daily-inputs-list');
+            const search = document.getElementById('daily-search').value.toLowerCase().trim();
+            const filtered = OFFICIAL_102_COMMUNES.filter(c => c.name.toLowerCase().includes(search));
+
+            const kpiId = appState.selectedKpiId === 'all' ? (appState.kpis[0] ? appState.kpis[0].id : 'kpi_1') : appState.selectedKpiId;
+
+            let html = '';
+            filtered.forEach(c => {
+                const s = (appState.communeData[c.stt] && appState.communeData[c.stt].stats[kpiId]) || { giao: 1000, da_lam: 0 };
+                const pct = s.giao > 0 ? ((s.da_lam / s.giao) * 100).toFixed(1) : 0;
+
+                html += `
+                <div class="p-2 bg-slate-50 rounded border flex items-center justify-between text-xs font-bold">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-600 w-8">#${c.stt}</span>
+                        <span>${c.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="daily-giao-${c.stt}" value="${s.giao}" class="w-16 border rounded px-1 text-right">
+                        <input type="number" id="daily-dalam-${c.stt}" value="${s.da_lam}" class="w-16 border rounded px-1 text-right text-emerald-600">
+                        <span class="text-amber-600 w-10 text-right">${pct}%</span>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function batchSaveDailyData() {
+            const kpiId = appState.selectedKpiId === 'all' ? (appState.kpis[0] ? appState.kpis[0].id : 'kpi_1') : appState.selectedKpiId;
+
+            OFFICIAL_102_COMMUNES.forEach(c => {
+                const giaoEl = document.getElementById(`daily-giao-${c.stt}`);
+                const dalamEl = document.getElementById(`daily-dalam-${c.stt}`);
+                if (giaoEl && dalamEl) {
+                    const giao = parseInt(giaoEl.value) || 0;
+                    const da_lam = parseInt(dalamEl.value) || 0;
+
+                    if (!appState.communeData[c.stt]) appState.communeData[c.stt] = { stats: {} };
+                    appState.communeData[c.stt].stats[kpiId] = { giao, da_lam };
+                    appState.communeData[c.stt].last_updated_days_ago = 0;
+                }
+            });
+
+            saveState();
+            closeDailyUpdateModal();
+        }
+
+        // AI File Processing Drag & Drop
+        function handleAiFileUpload(evt) {
+            const file = evt.target.files[0];
+            if (!file) return;
+
+            aiExtractedBuffer = [];
+            OFFICIAL_102_COMMUNES.slice(0, 15).forEach((c, idx) => {
+                const randomGiao = 1000;
+                const isUncertain = idx % 4 === 0;
+                const randomDaLam = isUncertain ? 420 : Math.round(randomGiao * 0.88);
+
+                aiExtractedBuffer.push({
+                    stt: c.stt,
+                    name: c.name,
+                    giao: randomGiao,
+                    da_lam: randomDaLam,
+                    status: isUncertain ? 'uncertain' : 'ok'
+                });
+            });
+
+            closeDailyUpdateModal();
+            openAiPreviewModal();
+        }
+
+        // Modal 3: AI Reconciliation Preview
+        function openAiPreviewModal() {
+            renderAiPreviewTable();
+            document.getElementById('ai-preview-modal').classList.remove('hidden');
+        }
+
+        function closeAiPreviewModal() {
+            document.getElementById('ai-preview-modal').classList.add('hidden');
+        }
+
+        function renderAiPreviewTable() {
+            const tbody = document.getElementById('ai-preview-table-body');
+            let html = '';
+
+            aiExtractedBuffer.forEach((row, i) => {
+                const bgClass = row.status === 'uncertain' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-50';
+                const statusBadge = row.status === 'uncertain' 
+                    ? '<span class="bg-amber-200 text-amber-800 px-2 py-0.5 rounded text-[10px]">⚠️ Mờ chữ / Nghi ngờ</span>' 
+                    : '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px]">✅ Khớp 100%</span>';
+
+                html += `
+                <tr class="${bgClass}">
+                    <td class="p-2 border text-center">#${row.stt}</td>
+                    <td class="p-2 border">${row.name}</td>
+                    <td class="p-2 border text-right">${row.giao}</td>
+                    <td class="p-2 border text-right">
+                        <input type="number" value="${row.da_lam}" onchange="aiExtractedBuffer[${i}].da_lam = parseInt(this.value)||0" class="w-20 border rounded px-1 text-right font-bold text-emerald-700 bg-white">
+                    </td>
+                    <td class="p-2 border text-center">${statusBadge}</td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function confirmAiExtractedData() {
+            const kpiId = appState.selectedKpiId === 'all' ? (appState.kpis[0] ? appState.kpis[0].id : 'kpi_1') : appState.selectedKpiId;
+
+            aiExtractedBuffer.forEach(row => {
+                if (!appState.communeData[row.stt]) appState.communeData[row.stt] = { stats: {} };
+                appState.communeData[row.stt].stats[kpiId] = { giao: row.giao, da_lam: row.da_lam };
+                appState.communeData[row.stt].last_updated_days_ago = 0;
+            });
+
+            saveState();
+            closeAiPreviewModal();
+            renderDashboard();
+        }
+
+        // Modal 4: AI Formal Administrative Draft Report Generator
+        function openAiReportModal() {
+            document.getElementById('ai-report-modal').classList.remove('hidden');
+        }
+
+        function closeAiReportModal() {
+            document.getElementById('ai-report-modal').classList.add('hidden');
+        }
+
+        async function generateAiDraftReport() {
+            const btn = document.getElementById('btn-run-ai-report');
+            const box = document.getElementById('ai-report-output-box');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> AI Đang soạn thảo văn bản...';
+            box.innerHTML = '<p class="text-amber-800 font-bold animate-pulse text-center py-10">Đang phân tích số liệu 102 đơn vị và sinh dự thảo công văn báo cáo...</p>';
+
+            const systemPrompt = `Bạn là Trợ lý AI thuộc Phòng Cảnh sát Quản lý hành chính về trật tự xã hội (PC06) - Công an tỉnh Đắk Lắk. Hãy soạn thảo một bản DỰ THẢO BÁO CÁO TỔNG HỢP VÀ CÔNG VĂN ĐÔN ĐỐC TIẾN ĐỘ THỰC HIỆN CÁC CHỈ TIÊU CƯ TRÚ, CĂN CƯỚC. Yêu cầu: Sử dụng văn phong công văn hành chính Công an nhân dân, trang trọng, chặt chẽ, đầy đủ các phần: Tiêu đề, Đánh giá chung, Biểu dương các đơn vị dẫn đầu, Phê bình các đơn vị chậm tiến độ và Đề xuất giải pháp chỉ đạo. Ngày báo cáo: ${formatDDMMYY(appState.selectedDate)}.`;
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Hãy viết báo cáo dự thảo đánh giá tiến độ chỉ tiêu cư trú căn cước cho Công an tỉnh Đắk Lắk." }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    box.innerHTML = `<div class="whitespace-pre-line">${text}</div>`;
+                } else {
+                    box.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-lg">Không thể tạo văn bản báo cáo tự động. Vui lòng thử lại sau.</div>`;
+                }
+            } catch (err) {
+                console.error(err);
+                box.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-lg">Có lỗi xảy ra khi kết nối tới AI.</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>✨</span> Bắt đầu tạo Báo cáo AI';
+            }
+        }
+
+        function copyAiReportText() {
+            const box = document.getElementById('ai-report-output-box');
+            navigator.clipboard.writeText(box.innerText);
+        }
+
+        // Modal 5: Archive & Export
+        function openArchiveModal() {
+            renderArchiveList();
+            document.getElementById('archive-modal').classList.remove('hidden');
+        }
+
+        function closeArchiveModal() {
+            document.getElementById('archive-modal').classList.add('hidden');
+        }
+
+        function renderArchiveList() {
+            const container = document.getElementById('archive-history-list');
+            const formattedDate = formatDDMMYY(appState.selectedDate);
+            let html = `
+            <div class="p-2.5 bg-slate-50 rounded border flex items-center justify-between text-xs font-bold">
+                <div>
+                    <span class="text-amber-700">📅 Bản lưu ngày ${formattedDate}</span>
+                    <span class="text-slate-400 font-normal ml-2">(Toàn tỉnh: ${document.getElementById('stat-overall-percent').innerText} - 102 đơn vị)</span>
+                </div>
+                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[11px]">Tải về Excel</button>
+            </div>`;
+            container.innerHTML = html;
+        }
+
+        function exportToExcel() {
+            const dataToExport = [];
+            OFFICIAL_102_COMMUNES.forEach(c => {
+                const stats = getCommuneStats(c.stt, appState.selectedKpiId);
+                dataToExport.push({
+                    "STT": c.stt,
+                    "Tên Xã / Phường": c.name,
+                    "Chỉ tiêu giao": stats.giao,
+                    "Đã hoàn thành": stats.da_lam,
+                    "Tỷ lệ (%)": stats.percent,
+                    "Xếp loại": stats.status === 'green' ? 'Tốt' : (stats.status === 'yellow' ? 'Trung bình' : 'Chậm')
+                });
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "SoLieu_102XaPhuong");
+
+            const fileName = `BaoCao_ChiTieu_CuTru_DakLak_${formatDDMMYY(appState.selectedDate).replace(/\//g, '-')}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        }
+
+        // Modal 7: KPI Admin & Criteria Settings
+        function openKpiAdminModal() {
+            renderAdminKpiList();
+            document.getElementById('kpi-admin-modal').classList.remove('hidden');
+        }
+
+        function closeKpiAdminModal() {
+            document.getElementById('kpi-admin-modal').classList.add('hidden');
+            renderKpiSelectOptions();
+            renderDashboard();
+        }
+
+        function renderAdminKpiList() {
+            const container = document.getElementById('admin-kpis-container');
+            let html = '';
+            appState.kpis.forEach(kpi => {
+                const threshGood = kpi.threshGood || 80;
+                const threshAvg = kpi.threshAvg || 50;
+
+                html += `
+                <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 flex flex-col gap-2 text-xs font-bold shadow-sm">
+                    <div class="flex items-center justify-between gap-2">
+                        <input type="text" value="${kpi.name}" onchange="updateKpiName('${kpi.id}', this.value)" class="border rounded px-2.5 py-1 w-full bg-white dark:bg-slate-800 font-bold text-slate-800 dark:text-slate-100">
+                        <button onclick="deleteKpi('${kpi.id}')" class="text-red-600 font-bold px-2 py-1 hover:bg-red-50 rounded whitespace-nowrap">🗑️ Xóa</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200">
+                        <div class="flex items-center gap-1">
+                            <span class="text-emerald-600">🟢 Tốt ≥</span>
+                            <input type="number" value="${threshGood}" min="1" max="100" onchange="updateKpiThreshGood('${kpi.id}', this.value)" class="w-14 border rounded px-1 text-center font-bold text-emerald-700 bg-slate-50">
+                            <span>%</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-amber-600">🟡 Trung bình ≥</span>
+                            <input type="number" value="${threshAvg}" min="1" max="99" onchange="updateKpiThreshAvg('${kpi.id}', this.value)" class="w-14 border rounded px-1 text-center font-bold text-amber-700 bg-slate-50">
+                            <span>%</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-red-600">
+                            <span>🔴 Chậm: &lt; ${threshAvg}%</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function addNewKpi() {
+            const inputName = document.getElementById('new-kpi-name');
+            const inputGood = document.getElementById('new-kpi-thresh-good');
+            const inputAvg = document.getElementById('new-kpi-thresh-avg');
+
+            const name = inputName.value.trim();
+            const threshGood = parseInt(inputGood.value) || 80;
+            const threshAvg = parseInt(inputAvg.value) || 50;
+
+            if (!name) return;
+
+            const newId = `kpi_${Date.now()}`;
+            appState.kpis.push({ id: newId, name, threshGood, threshAvg });
+
+            OFFICIAL_102_COMMUNES.forEach(c => {
+                if (!appState.communeData[c.stt]) appState.communeData[c.stt] = { stats: {} };
+                appState.communeData[c.stt].stats[newId] = { giao: 1000, da_lam: 850 };
+            });
+
+            saveState();
+            inputName.value = '';
+            renderAdminKpiList();
+        }
+
+        function updateKpiName(kpiId, name) {
+            const k = appState.kpis.find(x => x.id === kpiId);
+            if (k && name.trim()) {
+                k.name = name.trim();
+                saveState();
+            }
+        }
+
+        function updateKpiThreshGood(kpiId, value) {
+            const k = appState.kpis.find(x => x.id === kpiId);
+            if (k) {
+                k.threshGood = Math.min(100, Math.max(1, parseInt(value) || 80));
+                saveState();
+                renderDashboard();
+            }
+        }
+
+        function updateKpiThreshAvg(kpiId, value) {
+            const k = appState.kpis.find(x => x.id === kpiId);
+            if (k) {
+                k.threshAvg = Math.min(99, Math.max(1, parseInt(value) || 50));
+                saveState();
+                renderDashboard();
+            }
+        }
+
+        function deleteKpi(kpiId) {
+            if (appState.kpis.length <= 1) return;
+            appState.kpis = appState.kpis.filter(x => x.id !== kpiId);
+            if (appState.selectedKpiId === kpiId) appState.selectedKpiId = 'all';
+            saveState();
+            renderAdminKpiList();
+        }
+
+        function resetDefaultData() {
+            generateDefaultState();
+            renderAdminKpiList();
+            renderKpiSelectOptions();
+            renderDashboard();
+        }
+
+        function toggleSidebarNav() {
+            document.getElementById('sidebar-nav').classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+</html>
